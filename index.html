@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>סימולטור תנאי סף — הוראת מנכ"ל 4.65</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../../../01_System_Core/brand/beit-asakim/tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { overflow-x: hidden; }
+  body {
+    margin: 0;
+    font-family: var(--fb);
+    background: var(--open);
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    background: var(--white);
+    border-bottom: 3px solid var(--gold);
+    padding: 10px 24px;
+  }
+  header img { height: 48px; max-width: 100%; }
+  header h1 {
+    font-family: var(--fh);
+    font-size: .8rem;
+    margin: 0;
+    color: var(--navy);
+    justify-self: start;
+    min-width: 0;
+  }
+  header .instruction-wrap {
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  header a.instruction-link {
+    background: var(--navy);
+    color: var(--white);
+    text-decoration: none;
+    font-family: var(--fb);
+    font-weight: 600;
+    font-size: .9rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  header a.instruction-link:hover { background: var(--gold); }
+  header .instruction-caption {
+    font-size: .7rem;
+    color: #777;
+  }
+  .submission-banner {
+    background: #2e7d32;
+    color: #fff;
+    text-align: center;
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 12px 16px;
+  }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+  .card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+  h2.section-title {
+    font-family: var(--fh);
+    color: var(--navy);
+    border-bottom: 2px solid var(--sand);
+    padding-bottom: 8px;
+    margin-top: 0;
+  }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 6px; }
+  .field .hint { font-size: .85rem; color: #666; margin-top: 4px; }
+  .field .hint.hint-warning { color: #c0392b; font-weight: 600; }
+  .field-nested {
+    margin-inline-start: 28px;
+    margin-top: -6px;
+    padding: 12px 14px;
+    background: var(--cream);
+    border-inline-start: 3px solid var(--sand);
+    border-radius: 6px;
+  }
+  .field-nested label { font-weight: 500; font-size: .92rem; }
+  select, input[type=number] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--sand);
+    border-radius: 6px;
+    font-family: var(--fb);
+    font-size: 1rem;
+    background: var(--white);
+  }
+  .checkbox-row { display: flex; align-items: flex-start; gap: 8px; }
+  .checkbox-row input { margin-top: 4px; }
+  .label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-family: var(--fb);
+    font-size: .8rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    line-height: 1;
+  }
+  .info-icon:hover { background: var(--gold); }
+  .info-panel {
+    background: var(--cream);
+    border-inline-start: 4px solid var(--gold);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: .88rem;
+    margin-top: 8px;
+  }
+  .field-note-yellow {
+    color: #b8860b;
+    font-size: .85rem;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .hidden { display: none !important; }
+  .expense-list label { font-weight: 400; display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; }
+  button.primary {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    padding: 14px 28px;
+    font-family: var(--fb);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+  }
+  button.primary:hover { background: var(--gold); }
+  button.primary:disabled {
+    background: #b7b7b7;
+    cursor: not-allowed;
+  }
+  button.primary:disabled:hover { background: #b7b7b7; }
+  .not-eligible-banner {
+    display: block;
+    text-align: center;
+    color: #b3261e;
+    font-family: var(--fh);
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-top: 12px;
+  }
+  .result-fail {
+    border-inline-start: 5px solid #b3261e;
+    background: #fdecea;
+    padding: 16px 18px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+  .result-fail h3 { margin: 0 0 6px; color: #b3261e; font-family: var(--fh); }
+  .result-fail .source { font-size: .88rem; color: #555; margin-top: 6px; }
+  .result-pass {
+    border-inline-start: 5px solid #2e7d32;
+    background: #eaf6ea;
+    padding: 16px 18px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  .result-pass h3 { margin: 0 0 6px; color: #2e7d32; font-family: var(--fh); }
+  .cta-registration {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, var(--navy), var(--gold));
+    color: var(--white);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    text-decoration: none;
+    transition: filter .15s ease;
+  }
+  .cta-registration:hover { filter: brightness(1.08); }
+  .cta-registration .cta-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cta-registration .cta-icon svg { width: 22px; height: 22px; }
+  .cta-registration .cta-text { font-family: var(--fh); font-weight: 700; font-size: 1.02rem; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table th, table td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--sand); }
+  table th { background: var(--sand); font-family: var(--fh); }
+  .badge {
+    display: inline-block;
+    background: var(--sage);
+    color: var(--navy);
+    border-radius: 20px;
+    padding: 2px 12px;
+    font-size: .85rem;
+    font-weight: 600;
+  }
+  .note {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: .9rem;
+    margin-top: 12px;
+  }
+  .source-list li { margin-bottom: 6px; }
+  a.restart { display: inline-block; margin-top: 10px; color: var(--navy); font-weight: 600; }
+
+  .accordion { border-bottom: 1px solid var(--sand); margin-bottom: 12px; }
+  .accordion summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 10px 0;
+  }
+  .accordion summary::-webkit-details-marker { display: none; }
+  .accordion summary .accordion-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .accordion summary .accordion-heading-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .accordion summary .accordion-heading {
+    font-family: var(--fh);
+    color: var(--navy);
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .accordion summary .accordion-chevron {
+    flex-shrink: 0;
+    color: var(--navy);
+    transition: transform .2s ease;
+  }
+  .accordion[open] summary .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { padding: 4px 0 16px; }
+  .attachment-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .attachment-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--cream);
+    color: var(--navy);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .85rem;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--sand);
+  }
+  .attachment-link:hover { background: var(--gold); }
+
+  .process-flow { display: flex; flex-direction: column; }
+  .process-step { display: flex; gap: 12px; position: relative; padding-bottom: 18px; }
+  .process-step:last-child { padding-bottom: 0; }
+  .process-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    top: 26px;
+    bottom: -2px;
+    inset-inline-start: 13px;
+    width: 2px;
+    background: var(--sand);
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fh);
+    font-size: .8rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+  }
+  .step-content { padding-top: 3px; }
+  .step-content h4 { margin: 0 0 2px; font-family: var(--fh); color: var(--navy); font-size: .95rem; }
+  .step-content p { margin: 0; font-size: .85rem; color: #555; }
+
+  .sub-accordion { border: none; margin-bottom: 8px; }
+  .sub-accordion summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--cream);
+    border-radius: 6px;
+  }
+  .sub-accordion summary::-webkit-details-marker { display: none; }
+  .sub-accordion summary .accordion-heading {
+    font-family: var(--fh);
+    color: var(--navy);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .sub-accordion summary .accordion-chevron {
+    flex-shrink: 0;
+    color: var(--navy);
+    transition: transform .2s ease;
+  }
+  .sub-accordion[open] summary .accordion-chevron { transform: rotate(180deg); }
+  .sub-accordion .accordion-body { padding: 8px 16px 4px; }
+  .sub-accordion summary .accordion-summary-right { display: flex; align-items: center; gap: 10px; }
+  .note-danger { color: #c0392b; font-weight: 600; }
+  .scoring-criterion-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 640px) {
+    header {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+      padding: 10px 12px;
+      gap: 8px;
+    }
+    header h1 { justify-self: center; order: 2; }
+    header .instruction-wrap { order: 3; }
+    header img { order: 1; }
+    .submission-banner { font-size: .9rem; padding: 10px 12px; }
+    main { padding: 16px 10px 60px; }
+    .card { padding: 16px; }
+    h2.section-title { font-size: 1.15rem; }
+    table { display: block; overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../../../../../01_System_Core/brand/beit-asakim/Logo/לוגו הבית לעסקים משולב.jpg" alt="לוגו הבית לעסקים">
+  <div class="instruction-wrap">
+    <a class="instruction-link" href="https://www.gov.il/he/pages/dgi-instructions-04-65" target="_blank" rel="noopener">הוראת מנכ"ל 4.65</a>
+    <span class="instruction-caption">לחץ למעבר</span>
+  </div>
+  <h1 id="header-title">סימולטור תנאי סף ואמות מידה</h1>
+</header>
+
+<div class="submission-banner">ההוראה פתוחה — הגשת בקשות 20.7.26–20.8.26</div>
+
+<main>
+
+  <!-- שלב 1: תנאי סף -->
+  <section id="step-threshold" class="card">
+    <h2 class="section-title">שלב 1 — בדיקת תנאי סף</h2>
+
+    <div class="field">
+      <div class="label-row">
+        <label for="village" style="margin-bottom:0">1. באיזה יישוב פועל העסק?</label>
+        <button type="button" class="info-icon" id="villageInfoBtn" aria-expanded="false" aria-controls="villageInfoPanel" title="מידע נוסף">i</button>
+      </div>
+      <div class="info-panel hidden" id="villageInfoPanel">העסק ממוקם ביישובי ההחלטה או באזורי התעשייה שבישובי ההחלטה בהתאם להגדרתן בהחלטת הממשלה (נספח א' – יישובים צמודי גדר בגבול לבנון). לשם הוכחת מיקום העסק לעניין סעיף זה, העסק יצרף אסמכתא על מיקומו, בהתבסס על אחד מהאסמכתאות הבאות על שם העסק עליו מוגשת הבקשה: אישור ארנונה, חשבון חשמל, חוזה שכירות, רשיון עסק.</div>
+      <select id="village" style="margin-top:8px"><option value="">— בחר יישוב —</option></select>
+      <div id="village-hint" class="hint"></div>
+    </div>
+
+    <div class="field">
+      <div class="label-row">
+        <label for="businessType" style="margin-bottom:0">2. סוג הגורם העסקי</label>
+        <button type="button" class="info-icon" id="businessTypeInfoBtn" aria-expanded="false" aria-controls="businessTypeInfoPanel" title="מידע נוסף">i</button>
+      </div>
+      <div class="info-panel hidden" id="businessTypeInfoPanel">סעיף 2.2 להוראה- גורם עסקי: עסק או תאגיד הרשום בישראל והם עוסק מורשה כמשמעותו בחוק מס ערך מוסף התשל"ו- 1976</div>
+      <select id="businessType" style="margin-top:8px">
+        <option value="">— בחר —</option>
+        <option value="עוסק זעיר">עוסק זעיר</option>
+        <option value="עוסק פטור">עוסק פטור</option>
+        <option value="עוסק מורשה">עוסק מורשה</option>
+        <option value="תאגיד">תאגיד</option>
+      </select>
+      <div id="businessType-hint" class="hint"></div>
+    </div>
+
+    <div class="field">
+      <div class="label-row">
+        <label for="industryOrder" style="margin-bottom:0">3. באיזה סדר ענפי (סיווג הלמ"ס) פועל העסק?</label>
+        <button type="button" class="info-icon" id="industryOrderInfoBtn" aria-expanded="false" aria-controls="industryOrderInfoPanel" title="מידע נוסף">i</button>
+      </div>
+      <div class="info-panel hidden" id="industryOrderInfoPanel">סעיף 4.3 להוראה: הגורם העסקי משתייך לאחד מהענפי הכלכלה הבאים כהגדרתם על ידי הלשכה המרכזית לסטטיסטיקה – הסיווג האחיד של ענפי הכלכלה 2011:<br>- ענפי התעשייה המסווגים בעצמה טכנולוגית מסורתית, עצמה טכנולוגית מעורבת מסורתית או עצמה טכנולוגית מעורבת עילית כהגדרתם על ידי הלשכה המרכזית לסטטיסטיקה – "סיווג ענפי התעשייה לפי עצמה טכנולוגית".<br>- עסקים מענפי מסחר ושירותים הנמצאים בסדר N ,M ,J ,I ,H ,G, וענפים 95 ו- 96 מסדר S</div>
+      <select id="industryOrder" style="margin-top:8px"><option value="">— בחר סדר —</option></select>
+    </div>
+
+    <div class="field field-nested hidden" id="industrySubField">
+      <label for="industrySub" id="industrySubLabel">פירוט הענף</label>
+      <select id="industrySub"></select>
+      <div id="industrySubHint" class="hint"></div>
+      <div class="field-note-yellow hidden" id="industryOrderNote">בדיקת עמידה בתנאי סף זה תתבצע על בסיס טופס אישור לצורך ניכוי מס. הוועדה רשאית לאשר עמידה בתנאי סף זה בהתאם לאופי פעילות העסק</div>
+    </div>
+
+    <div class="field">
+      <div class="label-row">
+        <label for="revenue" style="margin-bottom:0">4. מחזור כספי שנתי (₪)</label>
+        <button type="button" class="info-icon" id="revenueInfoBtn" aria-expanded="false" aria-controls="revenueInfoPanel" title="מידע נוסף">i</button>
+      </div>
+      <div class="info-panel hidden" id="revenueInfoPanel">סעיף 4.1 להוראה: הגורם העסקי בעל מחזור כספי שנתי של עד 100 מיליון ₪ בהתאם לדו"ח הכספי האחרון ובלבד שהדוח האחרון אושר לא יותר משנה לפני מועד הגשת הבקשה או לא לאחר המועד האחרון להגשת דוחות כספיים בהתאם למועד שנקבע על ידי רשות המסים. עסק שהוקם לאחר תחילת השנה הקלנדרית הקודמת לפרסום המקצה, לא יידרש להצגת דו"ח כספי, אך יצרף דוחות מע"מ מתחילת פעילותו.</div>
+      <input type="text" inputmode="numeric" id="revenue" placeholder="לדוגמה: 5,000,000" style="margin-top:8px">
+      <div id="revenue-hint" class="hint"></div>
+    </div>
+
+    <div class="field">
+      <label>5. ניהול ושליטה בישראל</label>
+      <div class="checkbox-row">
+        <input type="checkbox" id="management">
+        <label for="management" id="managementLabel" style="font-weight:400"></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>6. ללא חדלות פירעון / חובות</label>
+      <div class="checkbox-row">
+        <input type="checkbox" id="insolvency">
+        <label for="insolvency" id="insolvencyLabel" style="font-weight:400"></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>7. האם מעוניין לבצע השקעות הון כחלק מהתכנית?</label>
+      <div class="checkbox-row">
+        <input type="radio" name="capital" id="capitalYes" value="yes">
+        <label for="capitalYes" style="font-weight:400">כן</label>
+      </div>
+      <div class="checkbox-row">
+        <input type="radio" name="capital" id="capitalNo" value="no">
+        <label for="capitalNo" style="font-weight:400">לא</label>
+      </div>
+      <div id="capital-hint" class="hint"></div>
+      <div id="expenseListField" class="hidden" style="margin-top:12px">
+        <div class="hint" style="margin-bottom:6px">אילו הוצאות מוכרות מתוכננות? (לסימון, לתכנון בלבד)</div>
+        <div id="expenseList" class="expense-list"></div>
+      </div>
+    </div>
+
+    <button class="primary" id="checkBtn" disabled>בדוק זכאות</button>
+    <div id="notEligibleBanner" class="not-eligible-banner hidden">לא זכאי</div>
+  </section>
+
+  <!-- תוצאת כישלון -->
+  <section id="step-fail" class="card hidden">
+    <h2 class="section-title">תוצאת הבדיקה</h2>
+    <div id="failList"></div>
+    <a href="#" class="restart" id="restartLink">↻ בדיקה חדשה</a>
+  </section>
+
+  <!-- שלב 2: אמות מידה -->
+  <section id="step-scoring" class="card hidden">
+    <div class="result-pass">
+      <h3>הבקשה עומדת בתנאי הסף</h3>
+      <p id="fundingTierText"></p>
+    </div>
+
+    <a class="cta-registration" href="https://wkf.ms/4vxASDy" target="_blank" rel="noopener">
+      <span class="cta-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 5H19V10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M19 5L10 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 5H7C5.89543 5 5 5.89543 5 7V17C5 18.1046 5.89543 19 7 19H17C18.1046 19 19 18.1046 19 17V12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="cta-text">להמשך בחינה וליווי, הנגשת מענקים וכלים נוספים</span>
+    </a>
+
+    <details class="accordion">
+      <summary>
+        <span class="accordion-summary-row">
+          <span class="accordion-heading-wrap">
+            <span class="accordion-heading">אמות מידה לדירוג הבקשה (מידע בלבד)</span>
+            <button type="button" class="info-icon" id="scoringInfoBtn" aria-expanded="false" aria-controls="scoringInfoPanel" title="מידע נוסף">i</button>
+          </span>
+          <span class="accordion-chevron">▾</span>
+        </span>
+        <div class="info-panel hidden" id="scoringInfoPanel">בהתאם לסעיף 7 להוראה, הועדה תבחן את הבקשות בהתאם לאמות המידה כמפורט בסעיף זה ותדרג אותן.</div>
+      </summary>
+      <div class="accordion-body">
+        <p>הדירוג הסופי נקבע ע"י ועדת ההוראה על בסיס התכנית העסקית שתוגש — הרשימה
+           הבאה להמחשה בלבד ואינה מחליפה שיקול דעת הוועדה. <strong>ציון מינימלי
+           לזכייה: <span id="minScore"></span></strong></p>
+        <div id="scoringCriteriaList"></div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>
+        <span class="accordion-summary-row">
+          <span class="accordion-heading">תכנית עסקית</span>
+          <span class="accordion-chevron">▾</span>
+        </span>
+      </summary>
+      <div class="accordion-body">
+        <ul>
+          <li>התכנית העסקית תוגש על גבי טופס המפורט בנהלי התכנית.</li>
+          <li>התכנית העסקית תכלול, בין היתר:
+            <ul>
+              <li>תיאור של העסק ומצבו הנוכחי</li>
+              <li>הצורך העסקי שבגינו מתבקש הסיוע</li>
+              <li>פירוט הפעולות המתוכננות והרכש המתוכנן</li>
+              <li>לוחות זמנים</li>
+              <li>עלויות צפויות</li>
+              <li>מקורות המימון</li>
+              <li>הסבר כיצד הפעולות המבוקשות צפויות לשפר, להרחיב או להקים את הפעילות העסקית ופעולות משלימות נוספות</li>
+            </ul>
+          </li>
+          <li>התכנית העסקית תכלול תחזית הפעילות לשלוש שנים (שנת הבקשה ושנתיים נוספות).</li>
+          <li>בעסק חדש התכנית תכלול את תיאור ההיערכות הדרושה לצורך תחילת הפעילות בפועל.</li>
+          <li>הבקשה תיתמך באסמכתאות רלוונטיות לתכנית העסקית (הצעות מחיר, מפרטים, וכדו'), לפי סוג הפעילות וההוצאה המבוקשת.</li>
+        </ul>
+        <div class="attachment-links">
+          <a class="attachment-link" href="./קבצים/נספח-2-טופס-אקסל-לחברה.xlsx" download>⬇ נספח 2 – טופס אקסל לחברה</a>
+          <a class="attachment-link" href="./קבצים/נספח-3-טופס-אקסל-מובנה-לעוסק-מורשה.xlsx" download>⬇ נספח 3 – טופס אקסל מובנה לעוסק מורשה</a>
+        </div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>
+        <span class="accordion-summary-row">
+          <span class="accordion-heading">הוצאות מוכרות (מידע תומך)</span>
+          <span class="accordion-chevron">▾</span>
+        </span>
+      </summary>
+      <div class="accordion-body">
+        <div id="eligibleExpensesInfo"></div>
+        <div class="note note-danger" id="notEligibleExpensesInfo"></div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>
+        <span class="accordion-summary-row">
+          <span class="accordion-heading">הליך בחינת הבקשה במשרד הכלכלה</span>
+          <span class="accordion-chevron">▾</span>
+        </span>
+      </summary>
+      <div class="accordion-body">
+        <div class="process-flow">
+          <div class="process-step">
+            <span class="step-num">1</span>
+            <div class="step-content">
+              <h4>הגשת הבקשה</h4>
+              <p>הגורם העסקי מגיש בקשה לפי נהלי התכנית, בצירוף כלל המסמכים, ההצהרות והאסמכתאות הנדרשים (מיקום העסק, זיקה לנכס ותכנית עסקית מפורטת).</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">2</span>
+            <div class="step-content">
+              <h4>בדיקה מקצועית</h4>
+              <p>בודק מקצועי מטעם הסוכנות עורך חוות דעת על הבקשה, בשיתוף פעולה עם הגורם העסקי.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">3</span>
+            <div class="step-content">
+              <h4>דיון בוועדה</h4>
+              <p>הבקשה וחוות הדעת מובאות לדיון בוועדה; בקשות מאותו מקצה נבחנות זו מול זו לפי התקציב שהוקצה.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">4</span>
+            <div class="step-content">
+              <h4>אישור התכנית</h4>
+              <p>הוועדה מאשרת את תוכנית העבודה, סך הסיוע ותקופת התכנית.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">5</span>
+            <div class="step-content">
+              <h4>הודעה לגורם העסקי</h4>
+              <p>אושרה הבקשה: נשלח כתב אישור. נדחתה: נשלחת הודעה מנומקת.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">6</span>
+            <div class="step-content">
+              <h4>ביצוע ותשלום</h4>
+              <p>המימון מועבר לאחר ביצוע הפעילות המאושרת, כנגד דרישת תשלום ובהתאם לאבני הדרך המאושרות.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">7</span>
+            <div class="step-content">
+              <h4>אישור דרישת התשלום</h4>
+              <p>הבודק המקצועי והסוכנות מאשרים את דרישת התשלום, כמפורט בנהלי התכנית.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary>
+        <span class="accordion-summary-row">
+          <span class="accordion-heading">תקופת התכנית</span>
+          <span class="accordion-chevron">▾</span>
+        </span>
+      </summary>
+      <div class="accordion-body">
+        <ul>
+          <li>הוצאות התוכנית העסקית להאצת הצמיחה יוכרו ממועד הגשת הבקשה במלואה או מיום אישור התוכנית (כפי שיבחר הגורם העסקי).</li>
+          <li>לבקשת הגורם העסקי, רשאית הוועדה להאריך את תקופת התכנית העסקית, לתקופה נוספת שלא תעלה על 12 חודשים, ללא הגדלה של התקציב המאושר בכתב האישור.</li>
+        </ul>
+      </div>
+    </details>
+
+    <a href="#" class="restart" id="restartLink2">↻ בדיקה חדשה</a>
+  </section>
+
+  <p class="hint" style="text-align:center">מקור נתונים: <span id="sourceFiles"></span></p>
+</main>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  const D = TRACK_DATA;
+
+  function cleanMd(text) {
+    if (!text) return '';
+    return text
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/`([^`]*)`/g, '$1')
+      .replace(/\*\*([^*]*)\*\*/g, '$1');
+  }
+
+  // --- מחזור כספי: פסיקים אוטומטיים ---
+  const revenueInput = document.getElementById('revenue');
+  function revenueValue() {
+    return revenueInput.value.replace(/,/g, '');
+  }
+  revenueInput.addEventListener('input', () => {
+    const digits = revenueInput.value.replace(/\D/g, '');
+    revenueInput.value = digits === '' ? '' : Number(digits).toLocaleString('en-US');
+    const hint = document.getElementById('revenue-hint');
+    if (digits !== '' && Number(digits) > D.revenueCapILS) {
+      hint.textContent = 'מחזור כספי שאינו עומד בתנאי הסף';
+      hint.classList.add('hint-warning');
+    } else {
+      hint.textContent = '';
+      hint.classList.remove('hint-warning');
+    }
+  });
+
+  document.getElementById('sourceFiles').textContent = D.meta.sourceFiles.join(' | ');
+  document.getElementById('managementLabel').textContent = cleanMd(D.conditionText.management);
+  document.getElementById('insolvencyLabel').textContent = cleanMd(D.conditionText.insolvency);
+
+  // --- מילוי יישובים ---
+  const villageSel = document.getElementById('village');
+  D.villages.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = v.name + ' (' + v.authority + ')';
+    villageSel.appendChild(opt);
+  });
+  const otherOpt = document.createElement('option');
+  otherOpt.value = '__other__';
+  otherOpt.textContent = 'אחר (לא ברשימת יישובי ההחלטה)';
+  villageSel.appendChild(otherOpt);
+
+  villageSel.addEventListener('change', () => {
+    const hint = document.getElementById('village-hint');
+    if (villageSel.value === '__other__') {
+      hint.textContent = 'יישוב שאינו עומד בתנאי הסף. ניתן לראות את רשימת היישובים המלאה בנספח הוראת המנכ"ל המפורסמת באינטרנט';
+      hint.classList.add('hint-warning');
+    } else {
+      hint.textContent = '';
+      hint.classList.remove('hint-warning');
+    }
+  });
+
+  // --- סוג הגורם העסקי ---
+  const businessTypeSel = document.getElementById('businessType');
+  const notEligibleBusinessTypes = ['עוסק זעיר', 'עוסק פטור'];
+  businessTypeSel.addEventListener('change', () => {
+    const hint = document.getElementById('businessType-hint');
+    if (notEligibleBusinessTypes.includes(businessTypeSel.value)) {
+      hint.textContent = 'סוג עסק שאינו עומד בתנאי הסף';
+      hint.classList.add('hint-warning');
+    } else {
+      hint.textContent = '';
+      hint.classList.remove('hint-warning');
+    }
+  });
+
+  // --- מילוי סדרי ענפים ---
+  const orderSel = document.getElementById('industryOrder');
+  D.industryOrders.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o.code;
+    opt.textContent = o.code + ' — ' + o.name;
+    orderSel.appendChild(opt);
+  });
+
+  const subField = document.getElementById('industrySubField');
+  const subSel = document.getElementById('industrySub');
+  const subLabel = document.getElementById('industrySubLabel');
+  const subHint = document.getElementById('industrySubHint');
+
+  orderSel.addEventListener('change', () => {
+    subSel.innerHTML = '';
+    subHint.textContent = '';
+    const order = orderSel.value;
+    document.getElementById('industryOrderNote').classList.add('hidden');
+    if (!order) { subField.classList.add('hidden'); return; }
+    subField.classList.remove('hidden');
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = '— בחר ענף —';
+    subSel.appendChild(placeholder);
+
+    if (order === 'C') {
+      subLabel.textContent = 'סוג התעשייה (לפי עצמה טכנולוגית)';
+      const tiers = ['מסורתית', 'מעורבת מסורתית', 'מעורבת עילית', 'עילית'];
+      tiers.forEach(tier => {
+        const items = D.industryTechTiers.filter(t => t.tier === tier);
+        if (!items.length) return;
+        const group = document.createElement('optgroup');
+        group.label = 'טכנולוגיה ' + tier;
+        items.forEach(it => {
+          const opt = document.createElement('option');
+          opt.value = it.code;
+          opt.dataset.eligible = it.eligible;
+          opt.textContent = it.code + ' — ' + it.name;
+          group.appendChild(opt);
+        });
+        subSel.appendChild(group);
+      });
+    } else {
+      subLabel.textContent = 'ענף ראשי';
+      (D.industryBranches[order] || []).forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.code;
+        opt.textContent = b.code + ' — ' + b.name;
+        subSel.appendChild(opt);
+      });
+      if (order === 'S') {
+        subHint.textContent = 'בסדר S מזכים רק ענפים 95, 96.';
+      }
+    }
+  });
+
+  subSel.addEventListener('change', () => {
+    const order = orderSel.value;
+    document.getElementById('industryOrderNote').classList.toggle('hidden', !subSel.value);
+    const opt = subSel.selectedOptions[0];
+    if (order === 'C' && subSel.value && opt.dataset.eligible !== 'true') {
+      subHint.textContent = 'ענף כלכלי שאינו עומד בתנאי הסף. ניתן לראות את רשימת הענפים המלאה בנספח הוראת המנכ"ל המפורסמת באינטרנט';
+      subHint.classList.add('hint-warning');
+    } else {
+      subHint.classList.remove('hint-warning');
+      if (order === 'S') {
+        subHint.textContent = 'בסדר S מזכים רק ענפים 95, 96.';
+      } else {
+        subHint.textContent = '';
+      }
+    }
+  });
+
+  // --- השקעות הון ---
+  const expenseListEl = document.getElementById('expenseList');
+  const flatExpenses = D.eligibleExpenses.flatMap(cat => cat.items);
+  flatExpenses.forEach((exp, i) => {
+    const label = document.createElement('label');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = exp;
+    cb.id = 'exp' + i;
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(cleanMd(exp)));
+    expenseListEl.appendChild(label);
+  });
+  document.querySelectorAll('input[name=capital]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('expenseListField').classList.toggle('hidden', document.getElementById('capitalYes').checked === false);
+      const capitalHint = document.getElementById('capital-hint');
+      if (document.getElementById('capitalNo').checked) {
+        capitalHint.textContent = 'השקעות הון הן תנאי יסוד להגשת בקשה. המענק יאושר אל מול השקעה וינתן (ככל ויאושר) אל מול ביצוע בפועל ובכפוף להצגת אסמכתאות.';
+        capitalHint.classList.add('hint-warning');
+      } else {
+        capitalHint.textContent = '';
+        capitalHint.classList.remove('hint-warning');
+      }
+    });
+  });
+
+  // --- זמינות כפתור "בדוק זכאות" — רק כשכל השדות מולאו ---
+  const checkBtn = document.getElementById('checkBtn');
+  const notEligibleBanner = document.getElementById('notEligibleBanner');
+
+  function isFormComplete() {
+    if (!villageSel.value) return false;
+    if (!businessTypeSel.value) return false;
+    if (!orderSel.value) return false;
+    if (!subField.classList.contains('hidden') && !subSel.value) return false;
+    if (revenueValue() === '') return false;
+    if (!document.getElementById('management').checked) return false;
+    if (!document.getElementById('insolvency').checked) return false;
+    if (!document.getElementById('capitalYes').checked && !document.getElementById('capitalNo').checked) return false;
+    return true;
+  }
+
+  function updateCheckBtnState() {
+    checkBtn.disabled = !isFormComplete();
+  }
+
+  document.querySelectorAll('#step-threshold input, #step-threshold select').forEach(el => {
+    el.addEventListener('input', updateCheckBtnState);
+    el.addEventListener('change', updateCheckBtnState);
+  });
+
+  // --- הערכת תנאי סף ---
+  function evaluateThresholds() {
+    const failures = [];
+
+    // 1. יישוב
+    if (!villageSel.value) {
+      failures.push({ label: 'יישוב', reason: 'יש לבחור יישוב.', source: '' });
+    } else if (villageSel.value === '__other__') {
+      failures.push({ label: 'מיקום העסק', reason: 'היישוב שנבחר אינו ברשימת יישובי ההחלטה (28 יישובים).', source: cleanMd(D.conditionText.location) });
+    }
+
+    // 2. סוג הגורם העסקי
+    if (!businessTypeSel.value) {
+      failures.push({ label: 'סוג הגורם העסקי', reason: 'יש לבחור סוג גורם עסקי.', source: '' });
+    } else if (notEligibleBusinessTypes.includes(businessTypeSel.value)) {
+      failures.push({ label: 'סוג הגורם העסקי', reason: 'סוג עסק שאינו עומד בתנאי הסף.', source: cleanMd(D.conditionText.businessType || '') });
+    }
+
+    // 3-4. ענף כלכלי
+    const order = orderSel.value;
+    if (!order) {
+      failures.push({ label: 'ענף כלכלי', reason: 'יש לבחור סדר ענפי.', source: '' });
+    } else {
+      const subVal = subSel.value;
+      if (!subVal) {
+        failures.push({ label: 'ענף כלכלי', reason: 'יש לבחור פירוט ענף.', source: '' });
+      } else if (order === 'C') {
+        const opt = subSel.selectedOptions[0];
+        if (opt.dataset.eligible !== 'true') {
+          failures.push({ label: 'ענף כלכלי (עצמה טכנולוגית)', reason: 'הענף שנבחר מסווג כ"טכנולוגיה עילית" — אינו מזכה במסלול זה.', source: cleanMd(D.conditionText.industry) });
+        }
+      } else if (order === 'S' && !D.sEligibleBranchCodes.includes(subVal)) {
+        failures.push({ label: 'ענף כלכלי (סדר S)', reason: 'מתוך סדר S מזכים רק ענפים 95, 96.', source: cleanMd(D.conditionText.industry) });
+      }
+    }
+
+    // 4. מחזור
+    const revenueEl = document.getElementById('revenue');
+    if (revenueValue() === '') {
+      failures.push({ label: 'מחזור כספי', reason: 'יש להזין מחזור כספי שנתי.', source: '' });
+    } else if (Number(revenueValue()) > D.revenueCapILS) {
+      failures.push({ label: 'מחזור כספי', reason: 'המחזור השנתי עולה על 100 מיליון ₪.', source: cleanMd(D.conditionText.revenue) });
+    }
+
+    // 5. ניהול ושליטה
+    if (!document.getElementById('management').checked) {
+      failures.push({ label: 'ניהול ושליטה בישראל', reason: 'יש לאשר תנאי זה כדי להמשיך.', source: cleanMd(D.conditionText.management) });
+    }
+
+    // 6. חדלות פירעון
+    if (!document.getElementById('insolvency').checked) {
+      failures.push({ label: 'ללא חדלות פירעון / חובות', reason: 'יש לאשר תנאי זה כדי להמשיך.', source: cleanMd(D.conditionText.insolvency) });
+    }
+
+    // 7. השקעות הון
+    const capitalYes = document.getElementById('capitalYes').checked;
+    const capitalNo = document.getElementById('capitalNo').checked;
+    if (!capitalYes && !capitalNo) {
+      failures.push({ label: 'השקעות הון', reason: 'יש לענות על השאלה.', source: '' });
+    } else if (capitalNo) {
+      failures.push({ label: 'השקעות הון', reason: 'המסלול מיועד למימון השקעות הון — ללא כוונה להשקיע, אין רלוונטיות להגשה.', source: '' });
+    }
+
+    return failures;
+  }
+
+  function fundingTierFor(revenue) {
+    const tiers = D.fundingTiers;
+    if (revenue > 25000000) return tiers[0];
+    if (revenue > 2000000) return tiers[1];
+    return tiers[2];
+  }
+
+  document.getElementById('revenueInfoBtn').addEventListener('click', () => {
+    const panel = document.getElementById('revenueInfoPanel');
+    const btn = document.getElementById('revenueInfoBtn');
+    const isHidden = panel.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!isHidden));
+  });
+
+  document.getElementById('villageInfoBtn').addEventListener('click', () => {
+    const panel = document.getElementById('villageInfoPanel');
+    const btn = document.getElementById('villageInfoBtn');
+    const isHidden = panel.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!isHidden));
+  });
+
+  document.getElementById('businessTypeInfoBtn').addEventListener('click', () => {
+    const panel = document.getElementById('businessTypeInfoPanel');
+    const btn = document.getElementById('businessTypeInfoBtn');
+    const isHidden = panel.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!isHidden));
+  });
+
+  document.getElementById('industryOrderInfoBtn').addEventListener('click', () => {
+    const panel = document.getElementById('industryOrderInfoPanel');
+    const btn = document.getElementById('industryOrderInfoBtn');
+    const isHidden = panel.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!isHidden));
+  });
+
+  document.getElementById('scoringInfoBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const panel = document.getElementById('scoringInfoPanel');
+    const btn = document.getElementById('scoringInfoBtn');
+    const isHidden = panel.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!isHidden));
+  });
+
+  checkBtn.addEventListener('click', () => {
+    const failures = evaluateThresholds();
+    const failSection = document.getElementById('step-fail');
+    const scoringSection = document.getElementById('step-scoring');
+
+    if (failures.length) {
+      notEligibleBanner.classList.remove('hidden');
+      const listEl = document.getElementById('failList');
+      listEl.innerHTML = '';
+      failures.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'result-fail';
+        div.innerHTML = '<h3>לא זכאי — ' + f.label + '</h3><p>' + f.reason + '</p>' +
+          (f.source ? '<div class="source">מקור: "' + f.source + '"</div>' : '');
+        listEl.appendChild(div);
+      });
+      failSection.classList.remove('hidden');
+      scoringSection.classList.add('hidden');
+      failSection.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    notEligibleBanner.classList.add('hidden');
+    failSection.classList.add('hidden');
+
+    const revenue = Number(revenueValue());
+    const tier = fundingTierFor(revenue);
+    document.getElementById('fundingTierText').textContent =
+      'מדרגת מענק משוערת (' + tier.revenueRange + '): ' + tier.cap;
+
+    document.getElementById('minScore').textContent = D.minScore;
+    const scoringList = document.getElementById('scoringCriteriaList');
+    scoringList.innerHTML = D.scoringCriteria.map(c => {
+      const weightBadge = '<span class="badge">' + cleanMd(c.weight) + '</span>';
+      if (!c.items || !c.items.length) {
+        return '<div class="scoring-criterion-row">' +
+          '<span class="accordion-heading">' + cleanMd(c.criterion) + '</span>' + weightBadge +
+          '</div>';
+      }
+      return '<details class="accordion sub-accordion"><summary>' +
+        '<span class="accordion-heading">' + cleanMd(c.criterion) + '</span>' +
+        '<span class="accordion-summary-right">' + weightBadge + '<span class="accordion-chevron">▾</span></span>' +
+        '</summary><div class="accordion-body">' +
+        (c.intro ? '<p>' + cleanMd(c.intro) + '</p>' : '') +
+        '<ul>' + c.items.map(i => '<li>' + cleanMd(i) + '</li>').join('') + '</ul>' +
+        '</div></details>';
+    }).join('');
+
+    const expWrap = document.getElementById('eligibleExpensesInfo');
+    expWrap.innerHTML = D.eligibleExpenses.map(cat =>
+      '<details class="accordion sub-accordion"><summary><span class="accordion-heading">' +
+      cleanMd(cat.category) + '</span><span class="accordion-chevron">▾</span></summary>' +
+      '<div class="accordion-body"><ul>' +
+      cat.items.map(i => '<li>' + cleanMd(i) + '</li>').join('') +
+      '</ul></div></details>'
+    ).join('');
+    document.getElementById('notEligibleExpensesInfo').textContent = cleanMd(D.notEligibleExpensesText);
+
+    scoringSection.classList.remove('hidden');
+    scoringSection.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  function restart() {
+    document.getElementById('step-fail').classList.add('hidden');
+    document.getElementById('step-scoring').classList.add('hidden');
+    notEligibleBanner.classList.add('hidden');
+    document.querySelectorAll('#step-threshold input, #step-threshold select').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+      else el.value = '';
+    });
+    document.getElementById('industrySubField').classList.add('hidden');
+    document.getElementById('expenseListField').classList.add('hidden');
+    document.querySelectorAll('#step-scoring details.accordion').forEach(d => { d.open = false; });
+    updateCheckBtnState();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.getElementById('restartLink').addEventListener('click', e => { e.preventDefault(); restart(); });
+  document.getElementById('restartLink2').addEventListener('click', e => { e.preventDefault(); restart(); });
+})();
+</script>
+</body>
+</html>
