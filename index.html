@@ -355,6 +355,79 @@
     margin-bottom: 8px;
   }
 
+  .disclaimer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+  }
+  .disclaimer-modal {
+    background: var(--white);
+    border-radius: 14px;
+    max-width: 560px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,.25);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .disclaimer-header {
+    background: var(--navy);
+    color: var(--white);
+    text-align: center;
+    padding: 24px 20px;
+  }
+  .disclaimer-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--gold);
+  }
+  .disclaimer-header h2 {
+    font-family: var(--fh);
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .disclaimer-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    font-size: .92rem;
+    line-height: 1.7;
+    color: var(--navy);
+  }
+  .disclaimer-body p { margin: 0 0 14px; }
+  .disclaimer-body p:last-child { margin-bottom: 0; }
+  .disclaimer-emphasis {
+    font-style: italic;
+    border-top: 1px solid var(--sand);
+    padding-top: 14px;
+    margin-top: 4px !important;
+  }
+  .disclaimer-accept-btn {
+    display: block;
+    width: 100%;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    padding: 16px;
+    font-family: var(--fb);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .disclaimer-accept-btn:hover { background: var(--gold); }
+
   @media (max-width: 640px) {
     header {
       grid-template-columns: 1fr;
@@ -371,10 +444,29 @@
     .card { padding: 16px; }
     h2.section-title { font-size: 1.15rem; }
     table { display: block; overflow-x: auto; }
+    .disclaimer-body { padding: 16px 18px; font-size: .88rem; }
+    .disclaimer-header { padding: 18px 16px; }
   }
 </style>
 </head>
 <body>
+
+<div id="disclaimerOverlay" class="disclaimer-overlay">
+  <div class="disclaimer-modal">
+    <div class="disclaimer-header">
+      <div class="disclaimer-icon">⚠</div>
+      <h2>הבהרה משפטית ואחריות משתמש</h2>
+    </div>
+    <div class="disclaimer-body">
+      <p>השימוש בסימולטור ובכל מידע, חישוב או תוצאה המוצגים בו הינם באחריות המשתמש בלבד.</p>
+      <p>המידע המוצג בסימולטור נועד לצורכי עזר והמחשה בלבד, ואינו מהווה ייעוץ, התחייבות, פרשנות מחייבת או תחליף לעיון בנוסח הוראת מנכ"ל 4.65 ובנהלים הרשמיים.</p>
+      <p>ייתכנו אי-דיוקים, טעויות או פערים בין תוצאות הסימולטור לבין המצב בפועל. באחריות המשתמש לוודא באופן עצמאי את עמידתו המלאה בכל תנאי הסף הרלוונטיים, ולהסתמך על המקורות הרשמיים בלבד.</p>
+      <p>בכל מקרה של סתירה, אי-התאמה או מחלוקת, הוראות הנוהל המחייב והחלטות משרד הכלכלה והתעשייה יגברו על כל נתון, חישוב או ציון המופיעים בסימולטור.</p>
+      <p class="disclaimer-emphasis">השימוש בסימולטור מהווה הסכמה מלאה לאמור לעיל, ולוויתור על כל טענה, דרישה או תביעה כלפי מפתחי הסימולטור או "הבית לעסקים בגליל" בגין הסתמכות על המידע המוצג.</p>
+    </div>
+    <button id="disclaimerAcceptBtn" class="disclaimer-accept-btn">אני מאשר/ת ומסכים/ה לתנאי השימוש</button>
+  </div>
+</div>
 
 <header>
   <img src="brand/Logo/לוגו הבית לעסקים משולב.jpg" alt="לוגו הבית לעסקים">
@@ -655,6 +747,11 @@
 </main>
 
 <script src="data.js"></script>
+<script>
+document.getElementById('disclaimerAcceptBtn').addEventListener('click', function () {
+  document.getElementById('disclaimerOverlay').remove();
+});
+</script>
 <script>
 (function () {
   const D = TRACK_DATA;
