@@ -148,6 +148,8 @@
   }
   .hidden { display: none !important; }
   .expense-list label { font-weight: 400; display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; }
+  .expense-list .expense-cat-heading { font-weight: 700; margin: 14px 0 6px; }
+  .expense-list .expense-cat-heading:first-child { margin-top: 0; }
   button.primary {
     background: var(--navy);
     color: var(--white);
@@ -202,9 +204,14 @@
     padding: 16px 20px;
     margin-bottom: 20px;
     text-decoration: none;
-    transition: filter .15s ease;
+    box-shadow: 0 4px 14px rgba(0,0,0,.18);
+    transition: filter .15s ease, transform .15s ease, box-shadow .15s ease;
   }
-  .cta-registration:hover { filter: brightness(1.08); }
+  .cta-registration:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,.24);
+  }
   .cta-registration .cta-icon {
     flex-shrink: 0;
     width: 40px;
@@ -216,7 +223,7 @@
     justify-content: center;
   }
   .cta-registration .cta-icon svg { width: 22px; height: 22px; }
-  .cta-registration .cta-text { font-family: var(--fh); font-weight: 700; font-size: 1.02rem; }
+  .cta-registration .cta-text { font-family: var(--fh); font-weight: 700; font-size: 1.08rem; }
   table { width: 100%; border-collapse: collapse; margin: 12px 0; }
   table th, table td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--sand); }
   table th { background: var(--sand); font-family: var(--fh); }
@@ -243,8 +250,14 @@
   .accordion summary {
     list-style: none;
     cursor: pointer;
-    padding: 10px 0;
+    padding: 10px 12px;
+    margin: 0 -12px;
+    border-radius: 6px;
+    transition: background-color .15s ease;
   }
+  .accordion summary:hover,
+  .accordion summary:focus-visible { background-color: var(--cream); }
+  .accordion summary:active { background-color: var(--sand); }
   .accordion summary::-webkit-details-marker { display: none; }
   .accordion summary .accordion-summary-row {
     display: flex;
@@ -329,7 +342,10 @@
     padding: 8px 12px;
     background: var(--cream);
     border-radius: 6px;
+    transition: background-color .15s ease;
   }
+  .sub-accordion summary:hover,
+  .sub-accordion summary:focus-visible { background-color: var(--gold); }
   .sub-accordion summary::-webkit-details-marker { display: none; }
   .sub-accordion summary .accordion-heading {
     font-family: var(--fh);
@@ -596,7 +612,7 @@
           <path d="M12 5H7C5.89543 5 5 5.89543 5 7V17C5 18.1046 5.89543 19 7 19H17C18.1046 19 19 18.1046 19 17V12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </span>
-      <span class="cta-text">להמשך בחינה וליווי, הנגשת מענקים וכלים נוספים</span>
+      <span class="cta-text">לחץ כאן להמשך בחינה וליווי, הנגשת מענקים וכלים נוספים</span>
     </a>
 
     <details class="accordion">
@@ -900,16 +916,22 @@ document.getElementById('disclaimerAcceptBtn').addEventListener('click', functio
 
   // --- השקעות הון ---
   const expenseListEl = document.getElementById('expenseList');
-  const flatExpenses = D.eligibleExpenses.flatMap(cat => cat.items);
-  flatExpenses.forEach((exp, i) => {
-    const label = document.createElement('label');
-    const cb = document.createElement('input');
-    cb.type = 'checkbox';
-    cb.value = exp;
-    cb.id = 'exp' + i;
-    label.appendChild(cb);
-    label.appendChild(document.createTextNode(cleanMd(exp)));
-    expenseListEl.appendChild(label);
+  let expIdx = 0;
+  D.eligibleExpenses.forEach(cat => {
+    const heading = document.createElement('div');
+    heading.className = 'expense-cat-heading';
+    heading.textContent = cleanMd(cat.category).replace(/^\d+\.\s*/, '');
+    expenseListEl.appendChild(heading);
+    cat.items.forEach(exp => {
+      const label = document.createElement('label');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = exp;
+      cb.id = 'exp' + expIdx++;
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(cleanMd(exp)));
+      expenseListEl.appendChild(label);
+    });
   });
   document.querySelectorAll('input[name=capital]').forEach(r => {
     r.addEventListener('change', () => {
