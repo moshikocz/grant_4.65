@@ -224,6 +224,38 @@
   }
   .cta-registration .cta-icon svg { width: 22px; height: 22px; }
   .cta-registration .cta-text { font-family: var(--fh); font-weight: 700; font-size: 1.08rem; }
+  .cta-webinar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, #d97706, var(--gold));
+    color: var(--white);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,.18);
+    transition: filter .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .cta-webinar:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,.24);
+  }
+  .cta-webinar .cta-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cta-webinar .cta-icon svg { width: 22px; height: 22px; }
+  .cta-webinar .cta-text { font-family: var(--fh); }
+  .cta-webinar .cta-text strong { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 2px; }
+  .cta-webinar .cta-text span { font-weight: 500; font-size: .92rem; opacity: .95; }
   table { width: 100%; border-collapse: collapse; margin: 12px 0; }
   table th, table td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--sand); }
   table th { background: var(--sand); font-family: var(--fh); }
@@ -399,15 +431,15 @@
     padding: 24px 20px;
   }
   .disclaimer-icon {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     margin: 0 auto 14px;
     border-radius: 50%;
     background: rgba(255,255,255,.15);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 1rem;
     color: var(--gold);
   }
   .disclaimer-header h2 {
@@ -604,6 +636,21 @@
       <p id="fundingTierText"></p>
     </div>
 
+    <a class="cta-webinar" href="https://forms.monday.com/forms/2548178707354890a5066f4f0794b2da?r=euc1" target="_blank" rel="noopener">
+      <span class="cta-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" stroke-width="2"/>
+          <path d="M3 9H21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 3V6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M17 3V6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="cta-text">
+        <strong>הרשמה לוובינר הסוכנות לעסקים קטנים ובינוניים במשרד הכלכלה</strong>
+        <span>יום שלישי, 28.7.26 בשעה 15:00 — לחצו להרשמה</span>
+      </span>
+    </a>
+
     <a class="cta-registration" href="https://wkf.ms/4vxASDy" target="_blank" rel="noopener">
       <span class="cta-icon">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -759,13 +806,17 @@
     <a href="#" class="restart" id="restartLink2">↻ בדיקה חדשה</a>
   </section>
 
-  <p class="hint" style="text-align:center">מקור נתונים: הוראת מנכ"ל 4.85 תכנית להאצה עסקית לעסקים ביישובים צמודי גדר בגבול לבנון</p>
+  <p class="hint" style="text-align:center">מקור נתונים: הוראת מנכ"ל 4.65 תכנית להאצה עסקית לעסקים ביישובים צמודי גדר בגבול לבנון</p>
 </main>
 
 <script src="data.js"></script>
 <script>
+document.documentElement.style.overflow = 'hidden';
+document.body.style.overflow = 'hidden';
 document.getElementById('disclaimerAcceptBtn').addEventListener('click', function () {
   document.getElementById('disclaimerOverlay').remove();
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
 });
 </script>
 <script>
