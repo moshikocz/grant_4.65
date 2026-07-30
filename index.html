@@ -237,6 +237,9 @@
     box-shadow: 0 4px 14px rgba(0,0,0,.18);
     transition: filter .15s ease, transform .15s ease, box-shadow .15s ease;
   }
+  .cta-webinar.cta-west {
+    background: linear-gradient(135deg, var(--navy), var(--sage));
+  }
   .cta-webinar:hover {
     filter: brightness(1.08);
     transform: translateY(-1px);
@@ -254,8 +257,18 @@
   }
   .cta-webinar .cta-icon svg { width: 22px; height: 22px; }
   .cta-webinar .cta-text { font-family: var(--fh); }
-  .cta-webinar .cta-text strong { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 2px; }
-  .cta-webinar .cta-text span { font-weight: 500; font-size: .92rem; opacity: .95; }
+  .cta-webinar .cta-text strong { display: block; font-weight: 600; font-size: .88rem; margin-bottom: 8px; opacity: .92; }
+  .cta-webinar .cta-text .region-badge {
+    display: inline-block;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,.25);
+    letter-spacing: .2px;
+  }
+  .cta-webinar.cta-east .region-badge { color: #fff7e6; }
+  .cta-webinar.cta-west .region-badge { color: #eaffe0; }
   table { width: 100%; border-collapse: collapse; margin: 12px 0; }
   table th, table td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--sand); }
   table th { background: var(--sand); font-family: var(--fh); }
@@ -636,7 +649,7 @@
       <p id="fundingTierText"></p>
     </div>
 
-    <a class="cta-webinar" href="https://forms.monday.com/forms/2548178707354890a5066f4f0794b2da?r=euc1" target="_blank" rel="noopener">
+    <a class="cta-webinar cta-east" href="https://www.habait4biz.co.il/post/workshop-horaat-mankal-4-65-business-acceleration" target="_blank" rel="noopener">
       <span class="cta-icon">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" stroke-width="2"/>
@@ -646,8 +659,23 @@
         </svg>
       </span>
       <span class="cta-text">
-        <strong>הרשמה לוובינר הסוכנות לעסקים קטנים ובינוניים במשרד הכלכלה</strong>
-        <span>יום שלישי, 28.7.26 בשעה 15:00 — לחצו להרשמה</span>
+        <strong>סדנת ליווי מעשית להגשת בקשה להוראת מנכ"ל 4.65 — בונים תוכנית עסקית וממלאים את הטפסים יחד, 06.08.2026</strong>
+        <span class="region-badge">הרשמה לגליל המזרחי</span>
+      </span>
+    </a>
+
+    <a class="cta-webinar cta-west" href="https://wkf.ms/4h0Y74n" target="_blank" rel="noopener">
+      <span class="cta-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" stroke-width="2"/>
+          <path d="M3 9H21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 3V6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M17 3V6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="cta-text">
+        <strong>סדנת ליווי מעשית להגשת בקשה להוראת מנכ"ל 4.65 — בונים תוכנית עסקית וממלאים את הטפסים יחד, 06.08.2026</strong>
+        <span class="region-badge">הרשמה לגליל המערבי</span>
       </span>
     </a>
 
@@ -878,7 +906,7 @@ document.getElementById('disclaimerAcceptBtn').addEventListener('click', functio
 
   // --- סוג הגורם העסקי ---
   const businessTypeSel = document.getElementById('businessType');
-  const notEligibleBusinessTypes = ['עוסק זעיר', 'עוסק פטור'];
+  const notEligibleBusinessTypes = TRACK_DATA.notEligibleBusinessTypes;
   businessTypeSel.addEventListener('change', () => {
     const hint = document.getElementById('businessType-hint');
     if (notEligibleBusinessTypes.includes(businessTypeSel.value)) {

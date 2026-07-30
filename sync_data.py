@@ -24,6 +24,17 @@ TECH_TIER_MD = VAULT / "נתונים נוספים" / "סיווג-עצמה-טכנ
 INDUSTRY_ORDER_CODES = ["C", "G", "H", "I", "J", "M", "N", "S"]
 S_ELIGIBLE_BRANCH_CODES = ["95", "96"]
 
+# מיפוי אפשרויות "סוג הגורם העסקי" של כלי זה (index.html, select#businessType) לערך
+# הקנוני המקביל ברשימת LEGAL_TYPES של סימולטור-מענקים-מטריצה — לצורך בדיקת כשירות
+# מול השדה 'סוגי_ישות_כשירים' בקובץ המסלול. "עוסק זעיר" הוא תת-סוג של "עוסק פטור"
+# (שניהם פטורים ממע"מ) ולכן ממופה לאותו ערך קנוני.
+BUSINESS_TYPE_TO_CANONICAL = {
+    "עוסק זעיר": "עוסק פטור",
+    "עוסק פטור": "עוסק פטור",
+    "עוסק מורשה": "עוסק מורשה",
+    "תאגיד": 'חברה בע"מ / תאגיד רשום',
+}
+
 
 def section(text, heading_prefix, next_prefix="## "):
     """מחזיר את תוכן הסעיף שמתחיל בשורת כותרת שמתחילה ב-heading_prefix, עד לכותרת הבאה."""
@@ -91,6 +102,29 @@ def parse_subsections(block):
     return sections
 
 
+def parse_yaml_list_field(text, key, source_name):
+    """מחלץ שדה frontmatter מסוג רשימת YAML (כל שורה '  - "ערך"') לפי שם המפתח.
+    מרים שגיאה אם השדה חסר — הכלי לא מנחש 'אין הגבלה' בשקט (ר' AGENTS.md)."""
+    m = re.search(rf'^{key}:\s*\n((?:\s*-\s*.+\n?)+)', text, re.MULTILINE)
+    if not m:
+        raise ValueError(
+            f"שדה חובה '{key}' חסר בקובץ המסלול {source_name} — "
+            f"ר' AGENTS.md/מסלולי-מענקים: יש לקבוע במפורש (allow-list או [\"all\"] עם ציטוט סעיף)."
+        )
+    items = []
+    for line in m.group(1).splitlines():
+        line = line.strip()
+        if not line.startswith("-"):
+            continue
+        value = line[1:].strip()
+        value = re.sub(r'^[\'"]|[\'"]$', "", value)
+        value = value.replace('\\"', '"')
+        items.append(value)
+    if not items:
+        raise ValueError(f"שדה '{key}' קיים אך ריק בקובץ המסלול {source_name}.")
+    return items
+
+
 def parse_bullets(block):
     """מפצל בלוק לפי בולטים '- ...' (כולל שורות המשך שנעטפו). מתעלם מטקסט מקדים שאינו בולט."""
     items = []
@@ -112,6 +146,14 @@ def build_track_data():
     villages_text = VILLAGES_MD.read_text(encoding="utf-8")
     industry_text = INDUSTRY_MD.read_text(encoding="utf-8")
     tech_tier_text = TECH_TIER_MD.read_text(encoding="utf-8")
+
+    # סוגי ישות כשירים (frontmatter, שדה חובה) — ממופה לאפשרויות select#businessType
+    # דרך BUSINESS_TYPE_TO_CANONICAL, כדי לגזור אילו אפשרויות אינן כשירות.
+    eligible_canonical_types = parse_yaml_list_field(track_text, "סוגי_ישות_כשירים", TRACK_MD.name)
+    not_eligible_business_types = [
+        local for local, canonical in BUSINESS_TYPE_TO_CANONICAL.items()
+        if canonical not in eligible_canonical_types
+    ]
 
     # תנאי סף (סעיף 4) — 6 פריטים לפי סדר המקור
     threshold_items = parse_numbered_list(section(track_text, "## תנאי סף להשתתפות"))
@@ -199,6 +241,7 @@ def build_track_data():
             "management": management_text,
             "insolvency": insolvency_text,
         },
+        "notEligibleBusinessTypes": not_eligible_business_types,
         "villages": villages,
         "fundingTiers": funding_tiers,
         "scoringCriteria": scoring_criteria,
