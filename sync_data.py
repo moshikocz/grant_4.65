@@ -24,6 +24,11 @@ TECH_TIER_MD = VAULT / "נתונים נוספים" / "סיווג-עצמה-טכנ
 INDUSTRY_ORDER_CODES = ["C", "G", "H", "I", "J", "M", "N", "S"]
 S_ELIGIBLE_BRANCH_CODES = ["95", "96"]
 
+# תת-ענפים ספציפיים כשירים נוספים למסלול 4.65 (עודכן 02.08.2026, סעיף 4.3.2) —
+# רמה עדינה מ"ענף ראשי", מתועדים בסעיף ייעודי בקובץ הסיווג (לא בטבלאות הכלליות
+# לפי סדר), ולכן מטופלים בנפרד מהלולאה הרגילה על "## סדר X —".
+EXTRA_ELIGIBLE_BRANCHES_HEADING = "## תת-ענפים כשירים נוספים (מסלול 4.65 בלבד"
+
 # מיפוי אפשרויות "סוג הגורם העסקי" של כלי זה (index.html, select#businessType) לערך
 # הקנוני המקביל ברשימת LEGAL_TYPES של סימולטור-מענקים-מטריצה — לצורך בדיקת כשירות
 # מול השדה 'סוגי_ישות_כשירים' בקובץ המסלול. "עוסק זעיר" הוא תת-סוג של "עוסק פטור"
@@ -205,6 +210,17 @@ def build_track_data():
         industry_orders.append({"code": code, "name": name})
         block = section(industry_text, m.group(0), next_prefix="## ")
         rows = parse_table(block)[1:]
+        industry_branches[code] = [{"code": r[0], "name": r[1]} for r in rows]
+
+    # תת-ענפים כשירים נוספים למסלול 4.65 (עדכון 02.08.2026, סעיף 4.3.2) — Q, R
+    extra_block = section(industry_text, EXTRA_ELIGIBLE_BRANCHES_HEADING, next_prefix="## ")
+    for heading, lines in parse_subsections(extra_block):
+        hm = re.match(r"^תחת סדר (\w) — (.+)$", heading)
+        if not hm:
+            raise ValueError(f"כותרת תת-ענפים כשירים נוספים לא בפורמט הצפוי: {heading!r}")
+        code, name = hm.group(1), hm.group(2).strip()
+        industry_orders.append({"code": code, "name": name})
+        rows = parse_table("\n".join(lines))[1:]
         industry_branches[code] = [{"code": r[0], "name": r[1]} for r in rows]
 
     # עצמה טכנולוגית (סדר C בלבד)
